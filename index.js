@@ -6,20 +6,18 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 1337;
-// const cors = require('cors');
+const cors = require('cors');
 
 require('dotenv').config()
 const client = new MongoClient(process.env.FINAL_URL);
-
 const dbName = "Course_project";
-
 const fs = require('fs/promises');
 
 
-// app.use(cors());
+
 
 console.log(process.env.PORT);
-
+app.use(cors());
 
 //which services are used (middleware)
 app.use(express.static('public'));
