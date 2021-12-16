@@ -43,7 +43,7 @@ app.post('/register', async (req, res) => {
             email: req.body.email
         })
 
-        if(!user){
+        if(user){
             res.status(400).send(`This account already exists, with email: "${req.body.email}" ! Use the right email.`);
             return;
         }
