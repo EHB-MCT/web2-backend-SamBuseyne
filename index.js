@@ -95,6 +95,49 @@ app.get('/movie', async (req, res) => {
     console.log("API movie route called.")
 });
 
+//Return movies based on search term
+app.get('/movie/t', async (req, res) => {
+    //title is located in the query: req.query.name
+
+    try {
+        //Connect to db
+        await client.connect()
+
+        //retrieve the movie collection data
+        const colli = client.db('Course_project').collection('Movies')
+
+        //only look for a movie with this ID
+        const query = {
+            name: req.query.name
+        };
+
+        const movies = await colli.find(query);
+
+        if (movies) {
+            //Send back the file
+            res.status(200).send(movies);
+            //succes status
+            return;
+        } else {
+            res.status(400).send('Movie could not be found with title:' + req.query.name);
+            //user mistake status
+        }
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            error: 'Something went wrong',
+            value: error
+        })
+    } finally {
+        await client.close();
+    }
+    console.log("API movie search term route called.")
+});
+
+
+
+
 //Save a movie to the database
 app.post('/save', async (req, res) => {
     //Validation if params are missing
