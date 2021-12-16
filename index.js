@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs')
 const {
     MongoClient,
     ObjectId
@@ -5,7 +6,7 @@ const {
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const bcrypt = require('bcryptjs')
+
 const port = process.env.PORT || 1337;
 const cors = require('cors');
 
@@ -13,13 +14,6 @@ require('dotenv').config()
 const client = new MongoClient(process.env.FINAL_URL);
 const dbName = "Course_project";
 const fs = require('fs/promises');
-const {
-    StringDecoder
-} = require("string_decoder");
-const {
-    stringify
-} = require("querystring");
-
 app.use(cors());
 
 //which services are used (middleware)
@@ -54,16 +48,28 @@ app.post('/register', async (req, res) => {
             return;
         }
 
-        const key = bcrypt.genSaltSync(10);
-        const hashedPass = bcrypt.hashSync(req.body.password,key);
+        const{
+            email,
+            password
+        } = req.body
 
-        let User ={
+        const hash = await bcrypt.hash(password,10);
+
+        let User = {
             email: req.body.email,
-            password: hashedPass,
-        };
+            password: hash
+        }
 
-        let result = await colli.insertOne(user);
-        res.status(201).json(User);
+        // const key = bcrypt.genSaltSync(10);
+        // const hashedPass = bcrypt.hashSync(req.body.password,key);
+
+        // let User ={
+        //     email: req.body.email,
+        //     password: hashedPass,
+        // };
+
+        let result = await colli.insertOne(User);
+        res.status(201).json("All gooed");
         return;
 
     } catch (error) {
