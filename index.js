@@ -96,7 +96,7 @@ app.get('/movie/:id', async (req, res) => {
 });
 
 //Return movies based on search term
-app.get('/movie/:t', async (req, res) => {
+app.get('/movie/:name', async (req, res) => {
     //title is located in the query: req.query.name
 
     try {
@@ -121,17 +121,15 @@ app.get('/movie/:t', async (req, res) => {
             //succes status
             return;
         } else {
-            res.status(400).send('Movie could not be found with title:' + req.params.name);
+            res.status(400).send('Movie could not be found with title:' + req.query.name);
             //user mistake status
         }
 
     } catch (error) {
         console.log(error)
-        console.log(query)
-
         res.status(500).send({
             error: 'Something went wrong',
-            value: error, query
+            value: error
         })
     } finally {
         await client.close();
