@@ -12,11 +12,13 @@ require('dotenv').config()
 const client = new MongoClient(process.env.FINAL_URL);
 const dbName = "Course_project";
 const fs = require('fs/promises');
+const {
+    StringDecoder
+} = require("string_decoder");
+const {
+    stringify
+} = require("querystring");
 
-
-
-
-console.log(process.env.PORT);
 app.use(cors());
 
 //which services are used (middleware)
@@ -55,7 +57,7 @@ app.get('/movies', async (req, res) => {
     console.log("API movies route called.")
 });
 
-//Return one movie from the file based on ID
+// Return one movie from the file based on ID
 app.get('/movie/:id', async (req, res) => {
     //id is located in the query: req.query.id
 
@@ -65,7 +67,6 @@ app.get('/movie/:id', async (req, res) => {
 
         //retrieve the movie collection data
         const colli = client.db('Course_project').collection('Movies')
-
         //only look for a movie with this ID
         const query = {
             _id: ObjectId(req.params.id)
@@ -84,7 +85,7 @@ app.get('/movie/:id', async (req, res) => {
         }
 
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         res.status(500).send({
             error: 'Something went wrong',
             value: error
@@ -96,46 +97,50 @@ app.get('/movie/:id', async (req, res) => {
 });
 
 //Return movies based on search term
-app.get('/movie/:name', async (req, res) => {
-    //title is located in the query: req.query.name
+// app.get('/movieTitle/:name', async (req, res) => {
+//     //title is located in the query: req.query.name
+//     // console.log(req.params.name)
+//     try {
+//         //Connect to db
+//         await client.connect()
 
-    try {
-        //Connect to db
-        await client.connect()
+//         //retrieve the movie collection data
+//         const colli = client.db('Course_project').collection('Movies')
 
-        //retrieve the movie collection data
-        const colli = client.db('Course_project').collection('Movies')
+//         //only look for a movie with this name
+//         // const query = {
+//         //     $text: {
+//         //         $search: "Tenet"
+//         //     }
+//         // };
 
-        //only look for a movie with this ID
-        const query = {
-            name: req.params.name
-        };
-        console.log(query)
+//         const movies = await colli.find({
+//             $text: {
+//                 $name: "Tenet"
+//             }
+//         });
 
-        const movies = await colli.find(query);
-        console.log(movies)
+//         if (movies) {
+//             //Send back the file
+//             res.status(200).send(movies);
+//             //succes status
+//             return;
+//         } else {
+//             res.status(400).send('Movie could not be found with title:' + req.params.name);
+//             //user mistake status
+//         }
 
-        if (movies) {
-            //Send back the file
-            res.status(200).send(movies);
-            //succes status
-            return;
-        } else {
-            res.status(400).send('Movie could not be found with title:' + req.query.name);
-            //user mistake status
-        }
-
-    } catch (error) {
-        console.log(error)
-        res.status(500).send({
-            error: 'Something went wrong',
-            value: error
-        })
-    } finally {
-        await client.close();
-    }
-    console.log("API movie search term route called.")
-});
+//     } catch (error) {
+//         // console.log(error)
+//         res.status(500).send({
+//             error: 'Something went wrong',
+//             value: error
+//         })
+//     } finally {
+//         await client.close();
+//     }
+//     console.log("API movie search term route called.")
+// });
 
 
 
