@@ -109,7 +109,9 @@ app.post('/login', async (req, res) => {
 
         if(verifyPass){
             res.status(200).json({
-                succes: "You have no acces to the database, have fun"
+                succes: "You have no acces to the database, have fun",
+                login: true,
+                id: user._id
             });
         }else{
             res.status(400).send("Wrong password, try again.")
