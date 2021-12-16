@@ -108,7 +108,7 @@ app.get('/movie/:name', async (req, res) => {
 
         //only look for a movie with this ID
         const query = {
-            name: req.query.name
+            name: req.params.name
         };
         console.log(query)
 
