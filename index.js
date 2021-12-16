@@ -110,8 +110,10 @@ app.get('/movie/:t', async (req, res) => {
         const query = {
             name: req.query.name
         };
+        console.log(query)
 
         const movies = await colli.find(query);
+        console.log(movies)
 
         if (movies) {
             //Send back the file
@@ -125,9 +127,11 @@ app.get('/movie/:t', async (req, res) => {
 
     } catch (error) {
         console.log(error)
+        console.log(query)
+
         res.status(500).send({
             error: 'Something went wrong',
-            value: error
+            value: error, query
         })
     } finally {
         await client.close();
