@@ -81,7 +81,7 @@ app.post('/register', async (req, res) => {
 
 
 //Login route
-app.get('/login', async (req, res) => {
+app.post('/login', async (req, res) => {
     try {
         if(!req.body.email || !req.body.password){
             res.status(400).send('Bad login: Missing email or password! Try again.');
