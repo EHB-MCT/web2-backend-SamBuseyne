@@ -5,6 +5,7 @@ const {
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const bcrypt = require('bcryptjs')
 const port = process.env.PORT || 1337;
 const cors = require('cors');
 
@@ -30,6 +31,97 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => {
     console.log("API root route called.")
     res.status(300).redirect('/info.html')
+});
+
+//Register route
+app.get('/register', async (req, res) => {
+    try {
+        if(!req.body.email || !req.body.password){
+            res.status(400).send('Bad Register: Missing email or password! Try again.');
+            return;
+        }
+
+        await client.connect()
+        const colli = client.db('Course_project').collection('Users')
+
+
+        const user = await colli.findOne({
+            email: req.body.email
+        })
+
+        if(!user){
+            res.status(400).send(`This account already exists, with email: "${req.body.email}" ! Use the right email.`);
+            return;
+        }
+
+        const key = bcrypt.genSaltSync(10);
+        const hashedPass = bcrypt.hashSync(req.body.password,key);
+
+        let User ={
+            email: req.body.email,
+            password: hashedPass,
+        };
+
+        let result = await colli.insertOne(user);
+        res.status(201).json(User);
+        return;
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            error: 'Something went wrong',
+            value: error
+        })
+
+    } finally {
+        await client.close()
+    }
+    console.log("Login route called.")
+});
+
+
+
+//Login route
+app.get('/login', async (req, res) => {
+    try {
+        if(!req.body.email || !req.body.password){
+            res.status(400).send('Bad login: Missing email or password! Try again.');
+            return;
+        }
+
+        await client.connect()
+        const colli = client.db('Course_project').collection('Users')
+
+        const user = await colli.findOne({
+            email: req.body.email
+        })
+
+        if(!user){
+            res.status(400).send('No account found with this email! Use the right email.');
+            return;
+        }
+
+        const verifyPass = bcrypt.compareSync(req.body.password, user.password);
+
+        if(verifyPass){
+            res.status(200).json({
+                succes: "You have no acces to the database, have fun"
+            });
+        }else{
+            res.status(400).send("Wrong password, try again.")
+        }
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            error: 'Something went wrong',
+            value: error
+        })
+
+    } finally {
+        await client.close()
+    }
+    console.log("Login route called.")
 });
 
 //Return all movies from the database
@@ -150,7 +242,6 @@ app.post('/save', async (req, res) => {
     //Validation if params are missing
 
     if (!req.body._id || !req.body.name || !req.body.director || !req.body.year || !req.body.genres || !req.body.description) {
-        console.log(req.body)
         res.status(400).send('Bad request: missing id, name, director, year, genres or description');
         return;
     }
