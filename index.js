@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
 });
 
 //Register route
-app.get('/register', async (req, res) => {
+app.post('/register', async (req, res) => {
     try {
         if(!req.body.email || !req.body.password){
             res.status(400).send('Bad Register: Missing email or password! Try again.');
@@ -78,7 +78,6 @@ app.get('/register', async (req, res) => {
     }
     console.log("Login route called.")
 });
-
 
 
 //Login route
