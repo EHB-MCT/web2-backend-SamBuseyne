@@ -56,7 +56,7 @@ app.get('/movies', async (req, res) => {
 });
 
 //Return one movie from the file based on ID
-app.get('/movie', async (req, res) => {
+app.get('/movie/:id', async (req, res) => {
     //id is located in the query: req.query.id
 
     try {
@@ -96,7 +96,7 @@ app.get('/movie', async (req, res) => {
 });
 
 //Return movies based on search term
-app.get('/movie/t', async (req, res) => {
+app.get('/movie/:t', async (req, res) => {
     //title is located in the query: req.query.name
 
     try {
@@ -119,7 +119,7 @@ app.get('/movie/t', async (req, res) => {
             //succes status
             return;
         } else {
-            res.status(400).send('Movie could not be found with title:' + req.query.name);
+            res.status(400).send('Movie could not be found with title:' + req.params.name);
             //user mistake status
         }
 
