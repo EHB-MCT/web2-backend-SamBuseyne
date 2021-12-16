@@ -68,7 +68,7 @@ app.get('/movie/:id', async (req, res) => {
 
         //only look for a movie with this ID
         const query = {
-            movieid: req.query.id
+            _id: ObjectId(req.params.id)
         };
 
         const movies = await colli.findOne(query);
@@ -79,7 +79,7 @@ app.get('/movie/:id', async (req, res) => {
             //succes status
             return;
         } else {
-            res.status(400).send('Movie could not be found with id:' + req.query.id);
+            res.status(400).send('Movie could not be found with id:' + req.params.id);
             //user mistake status
         }
 
