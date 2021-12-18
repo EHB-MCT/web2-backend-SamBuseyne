@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
 //Register route
 app.post('/register', async (req, res) => {
     try {
-        if (!req.body.email || !req.body.password) {
+        if (!req.body.email || !req.body.password || req.body.name) {
             res.status(400).send('Bad Register: Missing email or password! Try again.');
             return;
         }
@@ -50,25 +50,19 @@ app.post('/register', async (req, res) => {
 
         const {
             email,
-            password
+            password,
+            name
         } = req.body
 
         const hash = await bcrypt.hash(password, 10);
 
         let User = {
             email: req.body.email,
-            password: hash
+            password: hash,
+            name: req.body.name
         }
 
-        // const key = bcrypt.genSaltSync(10);
-        // const hashedPass = bcrypt.hashSync(req.body.password,key);
-
-        // let User ={
-        //     email: req.body.email,
-        //     password: hashedPass,
-        // };
-
-        let result = await colli.insertOne(User);
+        await colli.insertOne(User);
         res.status(201).json("All gooed");
         return;
 
@@ -109,7 +103,7 @@ app.post('/login', async (req, res) => {
 
         if (verifyPass) {
             res.status(200).json({
-                succes: "You have no acces to the database, have fun",
+                succes: "You have now acces to the database, have fun",
                 login: true,
                 id: user._id,
                 name: user.name
@@ -194,54 +188,6 @@ app.get('/movie/:id', async (req, res) => {
     }
     console.log("API movie route called.")
 });
-
-//Return movies based on search term
-// app.get('/movieTitle/:name', async (req, res) => {
-//     //title is located in the query: req.query.name
-//     // console.log(req.params.name)
-//     try {
-//         //Connect to db
-//         await client.connect()
-
-//         //retrieve the movie collection data
-//         const colli = client.db('Course_project').collection('Movies')
-
-//         //only look for a movie with this name
-//         // const query = {
-//         //     $text: {
-//         //         $search: "Tenet"
-//         //     }
-//         // };
-
-//         const movies = await colli.find({
-//             $text: {
-//                 $name: "Tenet"
-//             }
-//         });
-
-//         if (movies) {
-//             //Send back the file
-//             res.status(200).send(movies);
-//             //succes status
-//             return;
-//         } else {
-//             res.status(400).send('Movie could not be found with title:' + req.params.name);
-//             //user mistake status
-//         }
-
-//     } catch (error) {
-//         // console.log(error)
-//         res.status(500).send({
-//             error: 'Something went wrong',
-//             value: error
-//         })
-//     } finally {
-//         await client.close();
-//     }
-//     console.log("API movie search term route called.")
-// });
-
-
 
 
 //Save a movie to the database
