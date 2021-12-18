@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
 //Register route
 app.post('/register', async (req, res) => {
     try {
-        if(!req.body.email || !req.body.password){
+        if (!req.body.email || !req.body.password) {
             res.status(400).send('Bad Register: Missing email or password! Try again.');
             return;
         }
@@ -43,17 +43,17 @@ app.post('/register', async (req, res) => {
             email: req.body.email
         })
 
-        if(user){
+        if (user) {
             res.status(400).send(`This account already exists, with email: "${req.body.email}" ! Use the right email.`);
             return;
         }
 
-        const{
+        const {
             email,
             password
         } = req.body
 
-        const hash = await bcrypt.hash(password,10);
+        const hash = await bcrypt.hash(password, 10);
 
         let User = {
             email: req.body.email,
@@ -88,7 +88,7 @@ app.post('/register', async (req, res) => {
 //Login route
 app.post('/login', async (req, res) => {
     try {
-        if(!req.body.email || !req.body.password){
+        if (!req.body.email || !req.body.password) {
             res.status(400).send('Bad login: Missing email or password! Try again.');
             return;
         }
@@ -100,20 +100,21 @@ app.post('/login', async (req, res) => {
             email: req.body.email
         })
 
-        if(!user){
+        if (!user) {
             res.status(400).send('No account found with this email! Use the right email.');
             return;
         }
 
         const verifyPass = bcrypt.compareSync(req.body.password, user.password);
 
-        if(verifyPass){
+        if (verifyPass) {
             res.status(200).json({
                 succes: "You have no acces to the database, have fun",
                 login: true,
-                id: user._id
+                id: user._id,
+                name: user.name
             });
-        }else{
+        } else {
             res.status(400).send("Wrong password, try again.")
         }
 
