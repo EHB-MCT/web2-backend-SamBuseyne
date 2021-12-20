@@ -256,8 +256,8 @@ app.post('/favourite', async (req, res) => {
 
         // Send back successdata
         const query = {
-            userId: req.query.userId,
-            gameId: req.query.gameId
+            email: req.query.email,
+            movieid: req.query.movieid
         }; // Query to look for the game
         const game = await colli.find(query).toArray(); // Retrieve data filtered by query
         res.status(200).send(game); // Send back the data with the response
@@ -286,7 +286,7 @@ app.get('/favourite', async (req, res) => {
         const colli = client.db('Project_course').collection('Favourites');
 
         const query = {
-            email: req.query.email,
+            email: req.body.email,
             favourite: true
         };
 
