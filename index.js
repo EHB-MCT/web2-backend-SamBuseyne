@@ -27,104 +27,6 @@ app.get('/', (req, res) => {
     res.status(300).redirect('/info.html')
 });
 
-//Register route
-app.post('/register', async (req, res) => {
-    try {
-        if (!req.body.email || !req.body.password || req.body.name) {
-            res.status(400).send('Bad Register: Missing email or password! Try again.');
-            return;
-        }
-
-        await client.connect()
-        const colli = client.db('Course_project').collection('Users')
-
-
-        const user = await colli.findOne({
-            email: req.body.email
-        })
-
-        if (user) {
-            res.status(400).send(`This account already exists, with email: "${req.body.email}" ! Use the right email.`);
-            return;
-        }
-
-        const {
-            email,
-            password,
-            name
-        } = req.body
-
-        const hash = await bcrypt.hash(password, 10);
-
-        let User = {
-            email: req.body.email,
-            password: hash,
-            name: req.body.name
-        }
-
-        await colli.insertOne(User);
-        res.status(201).json("All gooed");
-        return;
-
-    } catch (error) {
-        console.log(error)
-        res.status(500).send({
-            error: 'Something went wrong',
-            value: error
-        })
-
-    } finally {
-        await client.close()
-    }
-    console.log("Login route called.")
-});
-
-//Login route
-app.post('/login', async (req, res) => {
-    try {
-        if (!req.body.email || !req.body.password) {
-            res.status(400).send('Bad login: Missing email or password! Try again.');
-            return;
-        }
-
-        await client.connect()
-        const colli = client.db('Course_project').collection('Users')
-
-        const user = await colli.findOne({
-            email: req.body.email
-        })
-
-        if (!user) {
-            res.status(400).send('No account found with this email! Use the right email.');
-            return;
-        }
-
-        const verifyPass = bcrypt.compareSync(req.body.password, user.password);
-
-        if (verifyPass) {
-            res.status(200).json({
-                succes: "You have now acces to the database, have fun",
-                login: true,
-                id: user._id,
-                name: user.name
-            });
-        } else {
-            res.status(400).send("Wrong password, try again.")
-        }
-
-    } catch (error) {
-        console.log(error)
-        res.status(500).send({
-            error: 'Something went wrong',
-            value: error
-        })
-
-    } finally {
-        await client.close()
-    }
-    console.log("Login route called.")
-});
-
 //Return all movies from the database
 app.get('/movies', async (req, res) => {
     try {
@@ -316,6 +218,159 @@ app.put('/movies/:id', async (req, res) => {
     } finally {
         await client.close();
     }
+});
+
+
+//User routes
+
+//favourite route
+app.post('/favourite', async (req, res) => {
+    if (!req.body.email || !req.body.password || !req.body.movieid) {
+        res.status(400).send('Bad request: now movieId or username');
+        return;
+    }
+
+    try {
+        await client.connect();
+        const colli = client.db('Course_project').collection('users'); // Create connection route / Select collection
+
+        //check for movie is already favourite
+        const checkFavourites = await colli.findOne({
+            email: req.body.email,
+            movieid: req.body.movieid
+        });
+
+        if (checkFavourites) {
+            res.status(400).send('Bad request: movie is already added to favourites ' + req.query.movieid);
+            return;
+        };
+
+        // Create the new boardgame object
+        let fMovie = {
+            movieid: req.body.movieid,
+            email: req.body.email,
+            favourite: true,
+        };
+
+        // Insert into the database
+        await colli.insertOne(fMovie);
+
+        // Send back successdata
+        const query = {
+            userId: req.query.userId,
+            gameId: req.query.gameId
+        }; // Query to look for the game
+        const game = await colli.find(query).toArray(); // Retrieve data filtered by query
+        res.status(200).send(game); // Send back the data with the response
+
+    } catch (error) { // A error catch
+        console.log(error); // Log the error
+        res.status(500).send({
+            error: 'Something went wrong!',
+            value: error
+        });
+
+    } finally {
+        await client.close();
+    }
+});
+
+//Register route
+app.post('/register', async (req, res) => {
+    try {
+        if (!req.body.email || !req.body.password || req.body.name) {
+            res.status(400).send('Bad Register: Missing email or password! Try again.');
+            return;
+        }
+
+        await client.connect()
+        const colli = client.db('Course_project').collection('Users')
+
+
+        const user = await colli.findOne({
+            email: req.body.email
+        })
+
+        if (user) {
+            res.status(400).send(`This account already exists, with email: "${req.body.email}" ! Use the right email.`);
+            return;
+        }
+
+        const {
+            email,
+            password,
+            name
+        } = req.body
+
+        const hash = await bcrypt.hash(password, 10);
+
+        let User = {
+            email: req.body.email,
+            password: hash,
+            name: req.body.name
+        }
+
+        await colli.insertOne(User);
+        res.status(201).json("All gooed");
+        return;
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            error: 'Something went wrong',
+            value: error
+        })
+
+    } finally {
+        await client.close()
+    }
+    console.log("Login route called.")
+});
+
+//Login route
+app.post('/login', async (req, res) => {
+    try {
+        if (!req.body.email || !req.body.password) {
+            res.status(400).send('Bad login: Missing email or password! Try again.');
+            return;
+        }
+
+        await client.connect()
+        const colli = client.db('Course_project').collection('Users')
+
+        const user = await colli.findOne({
+            email: req.body.email
+        })
+
+        if (!user) {
+            res.status(400).send('No account found with this email! Use the right email.');
+            return;
+        }
+
+        const verifyPass = bcrypt.compareSync(req.body.password, user.password);
+
+        if (verifyPass) {
+            res.status(200).json({
+                succes: "You have now acces to the database, have fun",
+                login: true,
+                id: user._id,
+                name: user.name
+            });
+        } else {
+            res.status(400).send("Wrong password, try again.")
+        }
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            error: 'Something went wrong',
+            value: error
+        })
+
+    } finally {
+        await client.close()
+    }
+    console.log("Login route called.")
 });
 
 app.listen(port, () => {
