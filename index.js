@@ -254,16 +254,17 @@ app.post('/favourite', async (req, res) => {
 
         await colli.insertOne(fMovie);
 
-        // Send back successdata
+
         const query = {
             email: req.query.email,
-            movieid: req.query.movieid
-        }; // Query to look for the game
-        const game = await colli.find(query).toArray(); // Retrieve data filtered by query
-        res.status(200).send(game); // Send back the data with the response
+            movieid: req.query.movie
+        };
 
-    } catch (error) { // A error catch
-        console.log(error); // Log the error
+        const movie = await colli.find(query).toArray();
+        res.status(200).send(movie);
+
+    } catch (error) {
+        console.log(error);
         res.status(500).send({
             error: 'Something went wrong!',
             value: error
