@@ -301,7 +301,7 @@ app.delete('/favourite', async (req, res) => {
         const colli = client.db('Course_project').collection('Favourites');
 
         const query = {
-            movieid: req.body.movieid
+            movieid: req.query.movieid
         };
 
         const result = await colli.deleteOne(query);
