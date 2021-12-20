@@ -297,16 +297,26 @@ app.get('/favourites', async (req, res) => {
 //Delete a favourite movie
 app.delete('/favourite', async (req, res) => {
     try {
+
         await client.connect();
         const colli = client.db('Course_project').collection('Favourites');
 
+        const current = Object(await colli.findOne({
+            email: req.body.email,
+            movieid: req.body.movieid
+        }));
+
         const query = {
-            movieid: req.params.movieid
+            _id: ObjectId(current._id)
         };
 
         const result = await colli.deleteOne(query);
 
-        res.status(200).send(`Favourite with movieid ${req.query.movieid} successfully deleted.`);
+        if (result.deletedCount === 1) {
+            res.status(200).send(`Favourite movie with id ${req.body.movieid} successfully deleted.`);
+        } else {
+            res.status(404).send(`No favourite movies matched the query.`);
+        }
 
     } catch (error) {
         console.log(error);
@@ -315,10 +325,10 @@ app.delete('/favourite', async (req, res) => {
             value: error
         });
 
-    } finally {
+    } finally { 
         await client.close();
     }
-})
+});
 
 
 //Register route
