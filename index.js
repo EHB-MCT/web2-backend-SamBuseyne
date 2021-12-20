@@ -242,18 +242,16 @@ app.post('/favourite', async (req, res) => {
         });
 
         if (checkFavourites) {
-            res.status(400).send('Bad request: movie is already added to favourites ' + req.query.movieid);
+            res.status(400).send('Bad request: movie is already added to favourites with id:' + req.body.movieid);
             return;
         };
 
-        // Create the new boardgame object
         let fMovie = {
             movieid: req.body.movieid,
             email: req.body.email,
             favourite: true,
         };
 
-        // Insert into the database
         await colli.insertOne(fMovie);
 
         // Send back successdata
