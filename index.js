@@ -233,9 +233,8 @@ app.post('/favourite', async (req, res) => {
 
     try {
         await client.connect();
-        const colli = client.db('Course_project').collection('Favourites'); // Create connection route / Select collection
+        const colli = client.db('Course_project').collection('Favourites');
 
-        //check for movie is already favourite
         const checkFavourites = await colli.findOne({
             email: req.body.email,
             movieid: req.body.movieid
@@ -276,21 +275,67 @@ app.post('/favourite', async (req, res) => {
 });
 
 //Get favourite movies of user
-app.get('/favourites', async (req, res) =>{ 
-    try{
+app.get('/favourites', async (req, res) => {
+    try {
         await client.connect();
         const colli = client.db('Course_project').collection('Favourites');
-        const favouriteMovies = await colli.find({}).toArray(); 
+        const favouriteMovies = await colli.find({}).toArray();
         res.status(200).send(favouriteMovies);
 
-    }catch(error){ 
-        console.log(error); 
-        res.status(500).send({ error: 'Something went wrong!', value: error }); 
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            error: 'Something went wrong!',
+            value: error
+        });
 
-    }finally {
-        await client.close(); 
+    } finally {
+        await client.close();
     }
 });
+
+//Delete a favourite movie
+app.delete('/favourite', async (req, res) => {
+    if (!req.body.email || !req.body.movieid) {
+        res.status(400).send('Bad request: missing email or movieid');
+        console.log(error);
+        return;
+    }
+    try {
+        await client.connect();
+        const colli = client.db('Course_project').collection('Favourites');
+
+        const favouriteExcist = await colli.findOne({
+            email: req.body.email,
+            movieid: req.body.movieid
+        });
+
+
+        if (favouriteExcist) {
+            res.status(400).send('Bad request: You cant delete something that doesnt excist ;), its about item:' + req.body.movieid);
+            return;
+        };
+
+        const query = {
+            email: req.query.email,
+            movieid: req.query.movie
+        };
+
+        const movie = await colli.find(query).toArray();
+
+        await colli.deleteOne(movie)
+        res.status(200).json({
+            succes: 'Succesfully deleted!',
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            error: 'Something went wrong',
+            value: error
+        })
+    }
+})
+
 
 //Register route
 app.post('/register', async (req, res) => {
