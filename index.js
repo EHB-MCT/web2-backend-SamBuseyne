@@ -223,7 +223,7 @@ app.put('/movies/:id', async (req, res) => {
 
 //User routes
 
-//favourite route
+//add favourite movie route
 app.post('/favourite', async (req, res) => {
     if (!req.body.email || !req.body.movieid) {
         res.status(400).send('Bad request: missing email or movieid');
@@ -264,6 +264,44 @@ app.post('/favourite', async (req, res) => {
 
     } catch (error) { // A error catch
         console.log(error); // Log the error
+        res.status(500).send({
+            error: 'Something went wrong!',
+            value: error
+        });
+
+    } finally {
+        await client.close();
+    }
+});
+
+//Get favourite movies of user
+app.get('/favourite', async (req, res) => {
+    if (!req.body.email) {
+        res.status(400).send('Bad request: Wrong email!');
+        console.log(error);
+        return;
+    }
+    try {
+        await client.connect(); // Connect to the db 
+        const colli = client.db('Project_course').collection('Favourites');
+
+        const query = {
+            email: req.query.email,
+            favourite: true
+        };
+
+        const fMovies = await colli.find(query).toArray();
+
+
+        if (fMovies) {
+            res.status(200).send(fMovies);
+            return;
+        } else {
+            res.status(400).send('No favourite movies found for user: ' + req.body.email);
+        }
+
+    } catch (error) {
+        console.log(error);
         res.status(500).send({
             error: 'Something went wrong!',
             value: error
