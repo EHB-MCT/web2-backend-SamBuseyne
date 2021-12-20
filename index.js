@@ -296,44 +296,32 @@ app.get('/favourites', async (req, res) => {
 
 //Delete a favourite movie
 app.delete('/favourite', async (req, res) => {
-    // if (!req.body.email || !req.body.movieid) {
-    //     res.status(400).send('Bad request: missing email or movieid');
-    //     console.log(error);
-    //     return;
-    // }
     try {
         await client.connect();
         const colli = client.db('Course_project').collection('Favourites');
 
-
-        const favouriteExcist = await colli.findOne({
-            email: req.body.email,
+        const current = Object(await colli.findOne({
+            _id: req.body._id,
             movieid: req.body.movieid
-        });
-
-
-        if (favouriteExcist) {
-            res.status(400).send('Bad request: You cant delete something that doesnt excist ;), its about item:' + req.body.movieid);
-            return;
-        };
+        }));
 
         const query = {
-            email: req.query.email,
-            movieid: req.query.movieid
+            _id: ObjectId(current._id)
         };
 
-        const movie = await colli.find(query).toArray();
+        const result = await colli.deleteOne(query);
 
-        await colli.deleteOne(movie)
-        res.status(200).json({
-            succes: 'Succesfully deleted!',
-        });
+        res.status(200).send(`Favourite with momvieid ${req.body.movieid} successfully deleted.`);
+
     } catch (error) {
         console.log(error);
         res.status(500).send({
-            error: 'Something went wrong',
+            error: 'Something went wrong!',
             value: error
-        })
+        });
+
+    } finally {
+        await client.close();
     }
 })
 
