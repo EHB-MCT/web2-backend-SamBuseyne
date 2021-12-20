@@ -276,44 +276,19 @@ app.post('/favourite', async (req, res) => {
 });
 
 //Get favourite movies of user
-app.get('/favourite', async (req, res) => {
-    // if (!req.body.email) {
-    //     res.status(400).send('Bad request: Wrong email!');
-    //     console.log(error);
-    //     return;
-    // }
-    try {
-        await client.connect(); // Connect to the db 
-        const colli = client.db('Project_course').collection('Favourites');
+app.get('/favourites', async (req, res) =>{ 
+    try{
+        await client.connect();
+        const colli = client.db('Course_project').collection('Favourites');
+        const favouriteMovies = await colli.find({}).toArray(); 
+        res.status(200).send(favouriteMovies);
 
-        const query = {
-            email: req.body.email,
-            favourite: true
-        };
+    }catch(error){ 
+        console.log(error); 
+        res.status(500).send({ error: 'Something went wrong!', value: error }); 
 
-        const fMovies = await colli.find(query).toArray();
-
-        if (fMovies) {
-            const query = {
-                email: req.query.email,
-                movieid: req.query.movie
-            };
-            res.status(200).send(query);
-            return;
-
-        } else {
-            res.status(400).send('No favourite movies found for user: ' + req.body.email);
-        }
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).send({
-            error: 'Something went wrong!',
-            value: error
-        });
-
-    } finally {
-        await client.close();
+    }finally {
+        await client.close(); 
     }
 });
 
