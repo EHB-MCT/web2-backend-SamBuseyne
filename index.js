@@ -233,7 +233,7 @@ app.post('/favourite', async (req, res) => {
 
     try {
         await client.connect();
-        const colli = client.db('Course_project').collection('Users'); // Create connection route / Select collection
+        const colli = client.db('Course_project').collection('Favourites'); // Create connection route / Select collection
 
         //check for movie is already favourite
         const checkFavourites = await colli.findOne({
