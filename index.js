@@ -225,11 +225,11 @@ app.put('/movies/:id', async (req, res) => {
 
 //add favourite movie route
 app.post('/favourite', async (req, res) => {
-    if (!req.body.email || !req.body.movieid) {
-        res.status(400).send('Bad request: missing email or movieid');
-        console.log(error);
-        return;
-    }
+    // if (!req.body.email || !req.body.movieid) {
+    //     res.status(400).send('Bad request: missing email or movieid');
+    //     console.log(error);
+    //     return;
+    // }
 
     try {
         await client.connect();
