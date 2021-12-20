@@ -305,6 +305,7 @@ app.delete('/favourite', async (req, res) => {
         await client.connect();
         const colli = client.db('Course_project').collection('Favourites');
 
+
         const favouriteExcist = await colli.findOne({
             email: req.body.email,
             movieid: req.body.movieid
@@ -318,7 +319,7 @@ app.delete('/favourite', async (req, res) => {
 
         const query = {
             email: req.query.email,
-            movieid: req.query.movie
+            movieid: req.query.movieid
         };
 
         const movie = await colli.find(query).toArray();
