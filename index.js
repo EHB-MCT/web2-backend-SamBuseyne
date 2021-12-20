@@ -300,18 +300,13 @@ app.delete('/favourite', async (req, res) => {
         await client.connect();
         const colli = client.db('Course_project').collection('Favourites');
 
-        const current = Object(await colli.findOne({
-            _id: req.body._id,
-            movieid: req.body.movieid
-        }));
-
         const query = {
-            _id: ObjectId(current._id)
+            movieid: req.body.movieid
         };
 
         const result = await colli.deleteOne(query);
 
-        res.status(200).send(`Favourite with momvieid ${req.body.movieid} successfully deleted.`);
+        res.status(200).send(`Favourite with movieid ${req.query.movieid} successfully deleted.`);
 
     } catch (error) {
         console.log(error);
