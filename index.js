@@ -296,11 +296,11 @@ app.get('/favourites', async (req, res) => {
 
 //Delete a favourite movie
 app.delete('/favourite', async (req, res) => {
-    if (!req.body.email || !req.body.movieid) {
-        res.status(400).send('Bad request: missing email or movieid');
-        console.log(error);
-        return;
-    }
+    // if (!req.body.email || !req.body.movieid) {
+    //     res.status(400).send('Bad request: missing email or movieid');
+    //     console.log(error);
+    //     return;
+    // }
     try {
         await client.connect();
         const colli = client.db('Course_project').collection('Favourites');
