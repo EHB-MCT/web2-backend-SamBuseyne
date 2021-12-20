@@ -293,10 +293,14 @@ app.get('/favourite', async (req, res) => {
 
         const fMovies = await colli.find(query).toArray();
 
-
         if (fMovies) {
-            res.status(200).send(fMovies);
+            const query = {
+                email: req.query.email,
+                movieid: req.query.movie
+            };
+            res.status(200).send(query);
             return;
+
         } else {
             res.status(400).send('No favourite movies found for user: ' + req.body.email);
         }
