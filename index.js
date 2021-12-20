@@ -225,14 +225,15 @@ app.put('/movies/:id', async (req, res) => {
 
 //favourite route
 app.post('/favourite', async (req, res) => {
-    if (!req.body.email || !req.body.password || !req.body.movieid) {
-        res.status(400).send('Bad request: now movieId or username');
+    if (!req.body.email || !req.body.movieid) {
+        res.status(400).send('Bad request: missing email or movieid');
+        console.log(error);
         return;
     }
 
     try {
         await client.connect();
-        const colli = client.db('Course_project').collection('users'); // Create connection route / Select collection
+        const colli = client.db('Course_project').collection('Users'); // Create connection route / Select collection
 
         //check for movie is already favourite
         const checkFavourites = await colli.findOne({
