@@ -363,7 +363,7 @@ app.get('/users', async (req, res) => {
 //Register route
 app.post('/register', async (req, res) => {
     try {
-        if (!req.body.email || !req.body.password || req.body.name) {
+        if (!req.body.email || !req.body.password || !req.body.name) {
             res.status(400).send('Bad Register: Missing email or password! Try again.');
             return;
         }
