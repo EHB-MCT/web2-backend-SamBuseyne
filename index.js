@@ -450,31 +450,49 @@ app.post('/login', async (req, res) => {
 });
 
 //Delete user by name
-app.delete('/users/name', async (req, res) => {
+app.delete('/users', async (req, res) => {
+    if (!req.body.name || !req.body.name) {
+        res.status(400).send('Bad Register: Missing name of user account. Try again with other username.');
+        return;
+    }
+
     try {
-        if (!req.body.name) {
-            res.status(400).send('Bad Register: Missing name of user account. Try again with other username.');
-            return;
-        }
+
         //validatie nog toevoegen dat niet iedereen elkaar user kan verwijderen
 
         await client.connect();
         const colli = client.db('Course_project').collection('Users');
 
-        const current = Object(await colli.findOne({
-            name: req.body.name,
-        }));
+        const verifyUser = Object(await colli.findOne({
+            name: req.body.name
+        }))
 
-        const query = {
-            _id: ObjectId(current._id)
-        };
+        var checkPassWord = passwordHash.verify(
+            req.body.password,
+            compare.password
+        );
 
-        const result = await colli.deleteOne(query);
+        if(checkPassWord == true){
+            const query = {
+                _id: ObjectId(verifyUser._id)
+            };
 
-        if (result.deletedCount === 1) {
-            res.status(200).send(`Account with name ${req.body.name} successfully deleted.`);
-        } else {
-            res.status(404).send(`No account matched the query.`);
+            const result =  await colli.deleteOne(query);
+
+            if(result.deletedCount === 1 ){
+                const connection = client.db('Course_project').collection('Favourites');
+                const clearData = {
+                    name: String(verifyUser._id)
+                };
+
+                await connection.deleteMany(clearData);
+                res.status(200).send(`Account with name ${req.body.name} successfully deleted.`)
+            }else{
+                res.status(404).send(`No account matched the query.`)
+            }
+
+        }else {
+            res.status(400).send(`Password doesn't match user with username ${req.body.name}`);
         }
 
     } catch (error) {
