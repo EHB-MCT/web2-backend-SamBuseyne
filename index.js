@@ -296,11 +296,11 @@ app.get('/favourites', async (req, res) => {
 //Delete a favourite movie by movieid
 app.delete('/favourite/:id', async (req, res) => {
     try {
-
         await client.connect();
-        const colli = client.db('Course_project').collection('Favourites');
 
-        const current = Object(await colli.findOne({
+        const collection = client.db('Course_project').collection('Favourites');
+
+        const current = Object(await collection.findOne({
             email: req.body.email,
             movieid: req.body.movieid
         }));
@@ -309,7 +309,7 @@ app.delete('/favourite/:id', async (req, res) => {
             _id: ObjectId(current._id)
         };
 
-        const result = await colli.deleteOne(query);
+        await collection.deleteOne(query)
 
         if (result.deletedCount === 1) {
             res.status(200).send(`Favourite movie with id ${req.body.movieid} successfully deleted.`);
@@ -320,15 +320,11 @@ app.delete('/favourite/:id', async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).send({
-            error: 'Something went wrong!',
+            error: 'Something went wrong',
             value: error
-        });
-
-    } finally {
-        await client.close();
+        })
     }
-});
-
+})
 
 
 
