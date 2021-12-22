@@ -91,7 +91,6 @@ app.get('/movie/:id', async (req, res) => {
     console.log("API movie route called.")
 });
 
-
 //Save a movie to the database
 app.post('/save', async (req, res) => {
     //Validation if params are missing
@@ -221,7 +220,7 @@ app.put('/movies/:id', async (req, res) => {
 });
 
 
-//User routes
+//Favourite routes
 
 //add favourite movie route
 app.post('/favourite', async (req, res) => {
@@ -274,7 +273,7 @@ app.post('/favourite', async (req, res) => {
     }
 });
 
-//Get favourite movies of user
+//Get all favourite movies of user
 app.get('/favourites', async (req, res) => {
     try {
         await client.connect();
@@ -325,11 +324,41 @@ app.delete('/favourite', async (req, res) => {
             value: error
         });
 
-    } finally { 
+    } finally {
         await client.close();
     }
 });
 
+//
+
+
+
+
+
+
+
+//User routes
+
+//Get all users
+
+app.get('/users', async (req, res) => {
+    try {
+        await client.connect();
+        const colli = client.db('Course_project').collection('Users');
+        const allUsers = await colli.find({}).toArray();
+        res.status(200).send(allUsers);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            error: 'Something went wrong!',
+            value: error
+        });
+
+    } finally {
+        await client.close();
+    }
+});
 
 //Register route
 app.post('/register', async (req, res) => {
