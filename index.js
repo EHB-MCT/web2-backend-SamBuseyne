@@ -294,7 +294,7 @@ app.get('/favourites', async (req, res) => {
 });
 
 //Delete a favourite movie by movieid
-app.delete('/favourite', async (req, res) => {
+app.delete('/favourite/:id', async (req, res) => {
     try {
 
         await client.connect();
@@ -454,7 +454,7 @@ app.post('/login', async (req, res) => {
 });
 
 //Delete user by name
-app.delete('/users', async (req, res) => {
+app.delete('/users/name', async (req, res) => {
     try {
         if (!req.body.name) {
             res.status(400).send('Bad Register: Missing name of user account. Try again with other username.');
