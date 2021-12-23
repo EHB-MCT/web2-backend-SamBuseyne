@@ -64,7 +64,7 @@ app.get('/movie/:id', async (req, res) => {
         const colli = client.db('Course_project').collection('Movies')
         //only look for a movie with this ID
         const query = {
-            _id: ObjectId(req.params.id)
+            movieid: req.body.movieid
         };
 
         const movies = await colli.findOne(query);
