@@ -357,7 +357,7 @@ app.get('/users', async (req, res) => {
 //Register route
 app.post('/register', async (req, res) => {
     try {
-        if (!req.body.email || !req.body.password || !req.body.name) {
+        if (!req.body.email || !req.body.password || !req.body.name || req.body.fMovie) {
             res.status(400).send('Bad Register: Missing email or password! Try again.');
             return;
         }
@@ -378,7 +378,8 @@ app.post('/register', async (req, res) => {
         const {
             email,
             password,
-            name
+            name,
+            fMovie
         } = req.body
 
         const hash = await bcrypt.hash(password, 10);
@@ -386,11 +387,12 @@ app.post('/register', async (req, res) => {
         let User = {
             email: req.body.email,
             password: hash,
-            name: req.body.name
+            name: req.body.name,
+            fMovie: req.body,fMovie
         }
 
         await colli.insertOne(User);
-        res.status(201).json("All gooed");
+        res.status(201).json(`User with id "${req.body._id}" is succesfully registrated to the database!.`);
         return;
 
     } catch (error) {
