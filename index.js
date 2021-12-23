@@ -434,7 +434,8 @@ app.post('/login', async (req, res) => {
                 login: true,
                 id: user._id,
                 name: user.name,
-                email: user.email
+                email: user.email,
+                fMovie: user.fMovie
             });
         } else {
             res.status(400).send("Wrong password, try again.")
