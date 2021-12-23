@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
 const {
     MongoClient,
     ObjectId
@@ -450,11 +450,6 @@ app.post('/login', async (req, res) => {
 
 //Delete user by name
 app.delete('/users', async (req, res) => {
-    if (!req.params.name || !req.params.password) {
-        res.status(400).send('Bad Register: Missing name of user account. Try again with other username.');
-        return;
-    }
-
     try {
 
         //validatie nog toevoegen dat niet iedereen elkaar user kan verwijderen
@@ -462,16 +457,10 @@ app.delete('/users', async (req, res) => {
         await client.connect();
         const colli = client.db('Course_project').collection('Users');
 
-        const verifyUser = Object(await colli.findOne({
-            name: req.body.name
-        }))
 
-        var checkPassWord = passwordHash.verify(
-            req.body.password,
-            compare.password
-        );
+        const verifyPass = bcrypt.compareSync(req.body.password, user.password);
 
-        if (checkPassWord == true) {
+        if (verifyPass== true) {
             const query = {
                 _id: ObjectId(verifyUser._id)
             };
