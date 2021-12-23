@@ -422,7 +422,8 @@ app.post('/login', async (req, res) => {
                 succes: "You have now acces to the database, have fun",
                 login: true,
                 id: user._id,
-                name: user.name
+                name: user.name,
+                email: user.email
             });
         } else {
             res.status(400).send("Wrong password, try again.")
