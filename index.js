@@ -450,13 +450,16 @@ app.post('/login', async (req, res) => {
 
 //Delete user by name
 app.delete('/users', async (req, res) => {
+    if (!req.body.email || !req.body.password) {
+        res.status(400).send('Bad login: Missing email or password! Try again.');
+        return;
+    }
     try {
 
         //validatie nog toevoegen dat niet iedereen elkaar user kan verwijderen
 
         await client.connect();
         const colli = client.db('Course_project').collection('Users');
-
 
         const verifyPass = bcrypt.compareSync(req.body.password, user.password);
 
