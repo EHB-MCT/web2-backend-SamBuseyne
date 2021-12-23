@@ -449,9 +449,9 @@ app.post('/login', async (req, res) => {
 });
 
 //Delete user by name
-app.delete('/users:id', async (req, res) => {
-    if (!req.params.email || !req.params.password) {
-        res.status(400).send('Bad login: Missing email or password! Try again.');
+app.delete('/users/:email', async (req, res) => {
+    if (!req.params.email) {
+        res.status(400).send('Bad login: Missing email! Try again.');
         return;
     }
 
@@ -459,30 +459,24 @@ app.delete('/users:id', async (req, res) => {
         await client.connect();
         const colli = client.db('Course_project').collection('Users');
 
-        const verifyPass = bcrypt.compareSync(req.query.password, user.password);
+        const query = {
+            email: req.body.email
+        };
 
-        if (verifyPass == true) {
-            const query = {
-                _id: ObjectId(verifyUser._id)
+        const result = await colli.deleteOne(query);
+
+        if (result.deletedCount === 1) {
+            const connection = client.db('Course_project').collection('Favourites');
+            const clearData = {
+                name: String(verifyUser._id)
             };
 
-            const result = await colli.deleteOne(query);
-
-            if (result.deletedCount === 1) {
-                const connection = client.db('Course_project').collection('Favourites');
-                const clearData = {
-                    name: String(verifyUser._id)
-                };
-
-                await connection.deleteMany(clearData);
-                res.status(200).send(`Account with name ${req.body.name} successfully deleted.`)
-            } else {
-                res.status(404).send(`No account matched the query.`)
-            }
-
+            await connection.deleteMany(clearData);
+            res.status(200).send(`Account with name ${req.body.name} successfully deleted.`)
         } else {
-            res.status(400).send(`Password doesn't match user with username ${req.body.name}`);
+            res.status(404).send(`No account matched the query.`)
         }
+
 
     } catch (error) {
         console.log(error);
