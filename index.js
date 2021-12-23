@@ -460,7 +460,7 @@ app.delete('/users/:email', async (req, res) => {
         const colli = client.db('Course_project').collection('Users');
 
         const query = {
-            email: req.query.email
+            email: req.params.email
         };
 
         const result = await colli.deleteOne(query);
@@ -472,9 +472,9 @@ app.delete('/users/:email', async (req, res) => {
             };
 
             await connection.deleteMany(clearData);
-            res.status(200).send(`Account with name ${req.body.name} successfully deleted.`)
+            res.status(200).send(`Account with name ${req.params.email} successfully deleted.`)
         } else {
-            res.status(404).send(`No account matched the query ${req.body.email}.`)
+            res.status(404).send(`No account matched the query. ${req.params.email}`)
         }
 
 
