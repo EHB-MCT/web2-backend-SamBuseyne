@@ -388,11 +388,19 @@ app.post('/register', async (req, res) => {
             email: req.body.email,
             password: hash,
             name: req.body.name,
-            fMovie: req.body,fMovie
+            fMovie: req.body,
+            fMovie
         }
 
         await colli.insertOne(User);
-        res.status(201).json(`User with id "${req.body._id}" is succesfully registrated to the database!.`);
+        res.status(201).json({
+            succes: `New User with id "${req.body._id}" added to the database!.`,
+            login: true,
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            fMovie: user.fMovie
+        });
         return;
 
     } catch (error) {
