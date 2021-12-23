@@ -14,7 +14,9 @@ require('dotenv').config()
 const client = new MongoClient(process.env.FINAL_URL);
 const dbName = "Course_project";
 const fs = require('fs/promises');
-const { verify } = require('crypto');
+const {
+    verify
+} = require('crypto');
 app.use(cors());
 
 //which services are used (middleware)
@@ -452,55 +454,40 @@ app.post('/login', async (req, res) => {
 });
 
 //change user settings
-app.put('/user/:id', async (req, res) => {
-    if (!req.body._id || !req.body.name || !req.body.email || !req.body.fMovie || !req.body.password) {
-        res.status(400).send("Bad request, missing: id, name, email, fMovie or password!");
+app.put('/users/:id', async (req, res) => {
+    if (!req.body._id || !req.body.name || !req.body.email || !req.body.fMovie) {
+        res.status(400).send("Bad request, missing: id, name, email or fMovie!");
         return;
     }
 
     try {
 
         await client.connect();
+
         const collection = client.db('Course_project').collection('Users');
-        
-        const user = await colli.findOne({
-            email: req.body.email
-        })
+        const query = {
+            _id: ObjectId(req.params.id)
+        };
 
-        if (!user) {
-            res.status(400).send('No account found with this email! Use the right email.');
-            return;
-        }
-
-        const verifyPass = bcrypt.compareSync(req.body.password, user.password);
-
-        if(verifyPass){
-            const query = {
-                _id: ObjectId(req.params.id)
-            };
-    
-            let update = {
-                $set: {
-                    name: req.body.name,
-                    email: req.body.course,
-                    fMovie: req.body.fMovie,
-                    password: req.body.password,
-                }
-            };
-    
-            const updateSettings = await collection.updateOne(query, update)
-            if (updateSettings) {
-                res.status(201).json(updateChallenge);
-                return;
-            } else {
-                res.status(400).send({
-                    error: `Settings could not be changed with account id "${req.body._id}"!.`,
-                    value: error,
-                });
+        let update = {
+            $set: {
+                name: req.body.name,
+                email: req.body.email,
+                fMovie: req.body.fMovie
             }
+        };
 
-        }else{
-            res.status(400).send("Wrong password, try again.")
+        const updateUser = await collection.updateOne(query, update)
+        if (updateUser) {
+            res.status(201).send({
+                succes: `User with id "${req.body._id}" is succesfully updated!.`,
+            });
+            return;
+        } else {
+            res.status(400).send({
+                error: `User with id "${req.body._id}" could not been found!.`,
+                value: error,
+            });
         }
 
     } catch (error) {
@@ -513,6 +500,7 @@ app.put('/user/:id', async (req, res) => {
         await client.close();
     }
 });
+
 
 //Delete user by name
 app.delete('/users/:name', async (req, res) => {
