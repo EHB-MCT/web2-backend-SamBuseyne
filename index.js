@@ -450,7 +450,7 @@ app.post('/login', async (req, res) => {
 
 //Delete user by name
 app.delete('/users', async (req, res) => {
-    if (!req.body.email || !req.body.password) {
+    if (!req.params.email || !req.params.password) {
         res.status(400).send('Bad login: Missing email or password! Try again.');
         return;
     }
@@ -463,7 +463,7 @@ app.delete('/users', async (req, res) => {
 
         const verifyPass = bcrypt.compareSync(req.body.password, user.password);
 
-        if (verifyPass== true) {
+        if (verifyPass == true) {
             const query = {
                 _id: ObjectId(verifyUser._id)
             };
