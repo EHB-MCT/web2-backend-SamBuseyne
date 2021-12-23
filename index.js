@@ -295,34 +295,40 @@ app.get('/favourites', async (req, res) => {
 });
 
 //Delete a favourite from the database
-app.delete('/favourite', async (req, res) => {
-    if (!req.params.movieid || !req.params.email) {
-        res.status(400).send('Bad request: missing id or email');
+app.delete('/favourites', async (req, res) => {
+    if (!req.params.email ||req.params.movieid) {
+        res.status(400).send('Bad login: Missing email or movieid! Try again.');
         return;
     }
+
     try {
         await client.connect();
-
-        const collection = client.db('Course_project').collection('Favourites');
+        const colli = client.db('Course_project').collection('Favourites');
 
         const query = {
-            movieid: req.query.movieid,
-            email: req.query.email
+            email: req.params.email,
+            movieid: req.params.movieid
         };
 
-        await collection.deleteOne(query)
-        res.status(200).json({
-            succes: 'Succesfully deleted!',
-        });
+        const result = await colli.deleteOne(query);
+
+        if(result){
+            res.status(200).send(`Favourite movie with movieid ${req.params.movieid} of user  ${req.params.email} successfully deleted.`)
+        }else {
+            res.status(404).send(`No favourite movie matched with the query. ${req.params.movieid}`)
+        }
+
     } catch (error) {
         console.log(error);
         res.status(500).send({
-            error: 'Something went wrong',
+            error: 'Something went wrong!',
             value: error
-        })
-    }
-})
+        });
 
+    } finally {
+        await client.close();
+    }
+});
 
 
 
@@ -449,7 +455,7 @@ app.post('/login', async (req, res) => {
 });
 
 //Delete user by name
-app.delete('/users/:name', async (req, res) => {
+app.delete('/users', async (req, res) => {
     if (!req.params.name) {
         res.status(400).send('Bad login: Missing name! Try again.');
         return;
