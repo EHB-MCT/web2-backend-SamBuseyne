@@ -451,7 +451,7 @@ app.post('/login', async (req, res) => {
 
 //Delete user by name
 app.delete('/users', async (req, res) => {
-    if (!req.body.name || !req.body.name) {
+    if (!req.body.name || !req.body.password) {
         res.status(400).send('Bad Register: Missing name of user account. Try again with other username.');
         return;
     }
@@ -472,14 +472,14 @@ app.delete('/users', async (req, res) => {
             compare.password
         );
 
-        if(checkPassWord == true){
+        if (checkPassWord == true) {
             const query = {
                 _id: ObjectId(verifyUser._id)
             };
 
-            const result =  await colli.deleteOne(query);
+            const result = await colli.deleteOne(query);
 
-            if(result.deletedCount === 1 ){
+            if (result.deletedCount === 1) {
                 const connection = client.db('Course_project').collection('Favourites');
                 const clearData = {
                     name: String(verifyUser._id)
@@ -487,11 +487,11 @@ app.delete('/users', async (req, res) => {
 
                 await connection.deleteMany(clearData);
                 res.status(200).send(`Account with name ${req.body.name} successfully deleted.`)
-            }else{
+            } else {
                 res.status(404).send(`No account matched the query.`)
             }
 
-        }else {
+        } else {
             res.status(400).send(`Password doesn't match user with username ${req.body.name}`);
         }
 
@@ -506,8 +506,6 @@ app.delete('/users', async (req, res) => {
         await client.close();
     }
 });
-
-
 
 
 app.listen(port, () => {
