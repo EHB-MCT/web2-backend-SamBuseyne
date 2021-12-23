@@ -295,14 +295,19 @@ app.get('/favourites', async (req, res) => {
 });
 
 //Delete a favourite from the database
-app.delete('/favourite/:id', async (req, res) => {
+app.delete('/favourite', async (req, res) => {
+    if (!req.body.movieid || !req.body.email ) {
+        res.status(400).send('Bad request: missing id or email');
+        return;
+    }
     try {
         await client.connect();
 
         const collection = client.db('Course_project').collection('Favourites');
 
         const query = {
-            _id: ObjectId(req.params.id)
+            movieid: req.query.movieid,
+            email: req.query.email
         };
 
         await collection.deleteOne(query)
