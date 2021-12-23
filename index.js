@@ -466,7 +466,7 @@ app.delete('/users/:name', async (req, res) => {
         const colli = client.db('Course_project').collection('Users');
 
         const query = {
-            email: req.params.name
+            name: req.params.name
         };
 
         const result = await colli.deleteOne(query);
