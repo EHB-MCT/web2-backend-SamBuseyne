@@ -53,7 +53,7 @@ app.get('/movies', async (req, res) => {
 });
 
 // Return one movie from the file based on ID
-app.get('/movie/:id', async (req, res) => {
+app.get('/movie', async (req, res) => {
     //id is located in the query: req.query.id
 
     try {
@@ -61,13 +61,14 @@ app.get('/movie/:id', async (req, res) => {
         await client.connect()
 
         //retrieve the movie collection data
-        const colli = client.db('Course_project').collection('Movies');
+        const colli = client.db('Course_project').collection('Movies')
 
-        let id = ObjectId(req.params.id);
+        //only look for a movie with this ID
+        const query = {
+            movieid: req.query.movieid
+        };
 
-        const movies = await colli.findOne({
-            _id : id
-        });
+        const movies = await colli.findOne(query);
 
         if (movies) {
             //Send back the file
