@@ -450,12 +450,12 @@ app.post('/login', async (req, res) => {
 
 //Delete user by name
 app.delete('/users', async (req, res) => {
-    try {
-        if (!req.query.email || !req.query.password) {
-            res.status(400).send('Bad login: Missing email or password! Try again.');
-            return;
-        }
+    if (!req.params.email || !req.params.password) {
+        res.status(400).send('Bad login: Missing email or password! Try again.');
+        return;
+    }
 
+    try {
         await client.connect();
         const colli = client.db('Course_project').collection('Users');
 
