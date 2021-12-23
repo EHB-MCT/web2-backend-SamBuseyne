@@ -67,9 +67,9 @@ http://hex2rgba.devoth.com/
 
 #### Favourites
 
-* GET /favourites = Get all favourites from the database
-* POST /favourite = Add a new favourite to the database
-* DELETE /favourite = Delete a favourite from the database
+* GET /favorites = Get all favorites from the database
+* POST /favorite = Add a new favorite to the database
+* DELETE /favorite = Delete a favorite from the database
 
 
 

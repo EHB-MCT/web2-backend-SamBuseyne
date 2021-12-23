@@ -227,7 +227,7 @@ app.put('/movies/:id', async (req, res) => {
 //Favourite routes
 
 //add favourite movie route
-app.post('/favourite', async (req, res) => {
+app.post('/favorite', async (req, res) => {
     if (!req.body.email || !req.body.movieid) {
         res.status(400).send('Bad request: missing email or movieid');
         console.log(error);
@@ -278,7 +278,7 @@ app.post('/favourite', async (req, res) => {
 });
 
 //Get all favourite movies of user
-app.get('/favourites', async (req, res) => {
+app.get('/favorites', async (req, res) => {
     try {
         await client.connect();
         const colli = client.db('Course_project').collection('Favourites');
@@ -298,7 +298,7 @@ app.get('/favourites', async (req, res) => {
 });
 
 //Delete a favourite from the database
-app.delete('/favourites/:id', async (req, res) => {
+app.delete('/favorites/:id', async (req, res) => {
 
 
     try {
