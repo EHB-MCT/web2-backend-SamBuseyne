@@ -455,7 +455,7 @@ app.post('/login', async (req, res) => {
 });
 
 //Delete user by name
-app.delete('/users', async (req, res) => {
+app.delete('/users/:name', async (req, res) => {
     if (!req.params.name) {
         res.status(400).send('Bad login: Missing name! Try again.');
         return;
