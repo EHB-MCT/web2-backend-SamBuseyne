@@ -296,7 +296,7 @@ app.get('/favourites', async (req, res) => {
 
 //Delete a favourite from the database
 app.delete('/favourite', async (req, res) => {
-    if (!req.query.movieid || !req.query.email) {
+    if (!req.params.movieid || !req.params.email) {
         res.status(400).send('Bad request: missing id or email');
         return;
     }
