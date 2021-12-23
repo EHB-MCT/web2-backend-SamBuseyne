@@ -61,13 +61,13 @@ app.get('/movie/:id', async (req, res) => {
         await client.connect()
 
         //retrieve the movie collection data
-        const colli = client.db('Course_project').collection('Movies')
-        //only look for a movie with this ID
-        const query = {
-            movieid: req.query.movieid
-        };
+        const colli = client.db('Course_project').collection('Movies');
 
-        const movies = await colli.findOne(query);
+        let id = new ObjectId(req.params.id);
+
+        const movies = await colli.findOne({
+            _id : id
+        });
 
         if (movies) {
             //Send back the file
