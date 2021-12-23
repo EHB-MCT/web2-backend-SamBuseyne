@@ -450,7 +450,7 @@ app.post('/login', async (req, res) => {
 
 //Delete user by name
 app.delete('/users', async (req, res) => {
-    if (!req.body.name || !req.body.password) {
+    if (!req.params.name || !req.params.password) {
         res.status(400).send('Bad Register: Missing name of user account. Try again with other username.');
         return;
     }
