@@ -450,7 +450,7 @@ app.post('/login', async (req, res) => {
 
 //Delete user by name
 app.delete('/users', async (req, res) => {
-    if (!req.query.email || !req.query.password) {
+    if (!req.params.email || !req.params.password) {
         res.status(400).send('Bad login: Missing email or password! Try again.');
         return;
     }
