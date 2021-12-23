@@ -465,18 +465,11 @@ app.delete('/users/:email', async (req, res) => {
 
         const result = await colli.deleteOne(query);
 
-        if (result.deletedCount === 1) {
-            const connection = client.db('Course_project').collection('Favourites');
-            const clearData = {
-                name: String(verifyUser._id)
-            };
-
-            await connection.deleteMany(clearData);
+        if(result){
             res.status(200).send(`Account with name ${req.params.email} successfully deleted.`)
-        } else {
+        }else {
             res.status(404).send(`No account matched the query. ${req.params.email}`)
         }
-
 
     } catch (error) {
         console.log(error);
