@@ -14,9 +14,6 @@ require('dotenv').config()
 const client = new MongoClient(process.env.FINAL_URL);
 const dbName = "Course_project";
 const fs = require('fs/promises');
-const {
-    verify
-} = require('crypto');
 app.use(cors());
 
 //which services are used (middleware)
