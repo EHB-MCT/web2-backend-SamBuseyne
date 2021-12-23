@@ -295,8 +295,8 @@ app.get('/favourites', async (req, res) => {
 });
 
 //Delete a favourite from the database
-app.delete('/favourites', async (req, res) => {
-    if (!req.params.email ||req.params.movieid) {
+app.delete('/favourites/:email/:movieid', async (req, res) => {
+    if (!req.params.email || req.params.movieid) {
         res.status(400).send('Bad login: Missing email or movieid! Try again.');
         return;
     }
@@ -312,9 +312,9 @@ app.delete('/favourites', async (req, res) => {
 
         const result = await colli.deleteOne(query);
 
-        if(result){
+        if (result) {
             res.status(200).send(`Favourite movie with movieid ${req.params.movieid} of user  ${req.params.email} successfully deleted.`)
-        }else {
+        } else {
             res.status(404).send(`No favourite movie matched with the query. ${req.params.movieid}`)
         }
 
@@ -466,14 +466,14 @@ app.delete('/users/:name', async (req, res) => {
         const colli = client.db('Course_project').collection('Users');
 
         const query = {
-            email: req.params.email
+            email: req.params.name
         };
 
         const result = await colli.deleteOne(query);
 
-        if(result){
+        if (result) {
             res.status(200).send(`Account with name ${req.params.name} successfully deleted.`)
-        }else {
+        } else {
             res.status(404).send(`No account matched the query. ${req.params.name}`)
         }
 
