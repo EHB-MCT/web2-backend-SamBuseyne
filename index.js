@@ -449,9 +449,9 @@ app.post('/login', async (req, res) => {
 });
 
 //Delete user by name
-app.delete('/users/:email', async (req, res) => {
-    if (!req.params.email) {
-        res.status(400).send('Bad login: Missing email! Try again.');
+app.delete('/users/:name', async (req, res) => {
+    if (!req.params.name) {
+        res.status(400).send('Bad login: Missing name! Try again.');
         return;
     }
 
@@ -466,9 +466,9 @@ app.delete('/users/:email', async (req, res) => {
         const result = await colli.deleteOne(query);
 
         if(result){
-            res.status(200).send(`Account with name ${req.params.email} successfully deleted.`)
+            res.status(200).send(`Account with name ${req.params.name} successfully deleted.`)
         }else {
-            res.status(404).send(`No account matched the query. ${req.params.email}`)
+            res.status(404).send(`No account matched the query. ${req.params.name}`)
         }
 
     } catch (error) {
