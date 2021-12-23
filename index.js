@@ -293,30 +293,21 @@ app.get('/favourites', async (req, res) => {
     }
 });
 
-//Delete a favourite movie by movieid
+//Delete a favourite from the database
 app.delete('/favourite/:id', async (req, res) => {
     try {
         await client.connect();
 
         const collection = client.db('Course_project').collection('Favourites');
 
-        const current = Object(await collection.findOne({
-            email: req.body.email,
-            movieid: req.body.movieid
-        }));
-
         const query = {
-            _id: ObjectId(current._id)
+            _id: ObjectId(req.params.id)
         };
 
         await collection.deleteOne(query)
-
-        if (result.deletedCount === 1) {
-            res.status(200).send(`Favourite movie with id ${req.body.movieid} successfully deleted.`);
-        } else {
-            res.status(404).send(`No favourite movies matched the query.`);
-        }
-
+        res.status(200).json({
+            succes: 'Succesfully deleted!',
+        });
     } catch (error) {
         console.log(error);
         res.status(500).send({
@@ -325,6 +316,7 @@ app.delete('/favourite/:id', async (req, res) => {
         })
     }
 })
+
 
 
 
